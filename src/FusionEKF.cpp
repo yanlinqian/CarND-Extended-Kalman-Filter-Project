@@ -41,8 +41,8 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1,0,0,0,
               0,1,0,0;
   //the initial transition matrix -- radar
-  Hj_ << 1,1,0,0,
-         1,1,0,0,
+  Hj_ << 1,0,0,0,
+         0,1,0,0,
          1,1,1,1;
   
   //the initial transition matrix F_
@@ -139,10 +139,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     
     //set the process covariance matrix Q
     ekf_.Q_ = MatrixXd(4, 4);
-    ekf_.Q_ << dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
-    0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
-    dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
-    0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
+    ekf_.Q_ <<  dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
+                0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
+                dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
+                0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
 
   ekf_.Predict();
 
