@@ -41,9 +41,9 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1,0,0,0,
               0,1,0,0;
   //the initial transition matrix -- radar
-  Hj_ << 1,0,0,0,
-         0,1,0,0,
-         1,1,1,1;
+  Hj_ << 0,0,0,0,
+         0,0,0,0,
+         0,0,0,0;
   
   //the initial transition matrix F_
   ekf_.F_ = MatrixXd(4, 4);
@@ -100,7 +100,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       Initialize state.
       */
       //set the state with the initial location and zero velocity
-      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
+      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0.0, 0.0;
     }
 
     // done initializing, no need to predict or update
@@ -144,7 +144,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                 dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
                 0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
 
-  ekf_.Predict();
+    ekf_.Predict();
 
   /*****************************************************************************
    *  Update
@@ -160,6 +160,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // Radar updates
       
       //tools has been instanced in file 'FusionEKF.h'
+      Tools tools;
       Hj_ = tools.CalculateJacobian(ekf_.x_);
       ekf_.H_ = Hj_;
       ekf_.R_ = R_radar_;
